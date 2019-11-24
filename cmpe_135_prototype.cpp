@@ -6,49 +6,40 @@
 // Description : Hello World in C++, Ansi-style
 //============================================================================
 
-//#include <iostream>
-//#include <string>
+#include <iostream>
+#include <string>
+#include "user.h"
 #include "prints.h"
 #include "printDetails.h"
 
 using namespace std;
 
-class User
-{
-public:
-	void set_username(string username)
-	{
-		Username = username;
-	}
-	void set_password(string password)
-	{
-		Password = password;
-	}
-	void set_state(string state)
-	{
-		State = state;
-	}
+void runLoginMenu();
 
-	string get_username()
-	{
-		return Username;
-	}
-	string get_password()
-	{
-		return Password;
-	}
-	string get_state()
-	{
-		return State;
-	}
 
-private:
-	string Username;
-	string State;
-	string Password;
-};
 
-void login_menu()
+
+//TODO these will check strings of hash map to ensure
+// 1. Username exists
+// 2. Password matches
+
+//bool enter_usersname()
+//{
+//
+//}
+//
+//bool enter_password()
+//{
+//
+//}
+
+int main() {
+	runLoginMenu();
+	cout<<"login finished"<<endl;
+
+}
+
+void runLoginMenu()
 {
 	int menu_select = 0;
 	cout<<"Select an option"<<endl;
@@ -114,26 +105,5 @@ void login_menu()
 		exit(0);
 	}
 
-
-}
-
-
-//TODO these will check strings of hash map to ensure
-// 1. Username exists
-// 2. Password matches
-
-//bool enter_usersname()
-//{
-//
-//}
-//
-//bool enter_password()
-//{
-//
-//}
-
-int main() {
-	login_menu();
-	cout<<"login finished"<<endl;
 
 }
