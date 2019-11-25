@@ -1,10 +1,3 @@
-/*
- * printDetails.h
- *
- *  Created on: Nov 14, 2019
- *      Author: Brandon Neep
- */
-
 
 #ifndef PRINTDETAILS_H_
 #define PRINTDETAILS_H_
@@ -12,21 +5,25 @@
 
 #include <string>
 #include <iostream>
+#include "Prints.h"
 
 using namespace std;
 
-class printDetails
+class printDetails : public Prints
 {
+protected:
+	Prints *m_Prints;
 public:
-	string getDetails();
-	void setDetails();
-private:
-	string Title;
-	string Length;
-	string Genre;
-	string Author;
-	string Cost;
+	printDetails(Prints *basePrint) : m_Prints(basePrint){}
 
+	string getDetails()
+	{
+		return m_Prints->getDetails();
+	}
+	double cost()
+	{
+		return m_Prints->cost();
+	}
 };
 
 

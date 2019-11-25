@@ -1,18 +1,16 @@
-/*
- * Prints.h
- *
- *  Created on: Nov 14, 2019
- *      Author: Brandon Neep
- */
+#include <iostream>
+#include <string>
 
 #ifndef PRINTS_H_
 #define PRINTS_H_
 
+using namespace std;
+
 class Prints
 {
 public:
-
-private:
+    virtual string getDetails() = 0;
+    virtual double cost() = 0;
 
 };
 

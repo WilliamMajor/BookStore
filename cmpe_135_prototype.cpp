@@ -11,6 +11,8 @@
 #include "user.h"
 #include "prints.h"
 #include "printDetails.h"
+#include "bookDetails.h"
+#include "concreateComponents.h"
 
 using namespace std;
 
@@ -34,8 +36,19 @@ void runLoginMenu();
 //}
 
 int main() {
-	runLoginMenu();
-	cout<<"login finished"<<endl;
+	//runLoginMenu();
+	//cout<<"login finished"<<endl;
+	Prints *basePrint = new Book();
+
+	Prints *decoratedPrint = new Title(basePrint);
+
+	decoratedPrint = new Length(decoratedPrint);
+	decoratedPrint = new Genre(decoratedPrint);
+	decoratedPrint = new Author(decoratedPrint);
+
+	cout << decoratedPrint -> getDetails() << endl;
+	cout << decoratedPrint -> cost() << endl;
+
 
 }
 
