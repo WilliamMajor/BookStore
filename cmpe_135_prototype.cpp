@@ -35,6 +35,18 @@ map<string, User> userList;
 map<string, map<int, map<string, string>>> stateMap; //three layer deep map damn...
 map<string, User>::iterator itr; 
 
+/*
+TODO (if we want to)
+-add quantity to books (decorations make this a pain in the ass, but we could make a decoration function that adds a book and one that removes a books quantity...)
+-add search by specific book for users(this is pretty easy just traverse the map looking for the book title if you find it we have it...)
+-maybe encrypt the userdata being sent to the textfile if anyone cares enough...
+-do some sanity/value checking on input data. 
+-bug hunting! I'm sure there are lots of them hiding...
+-anything else that people want to add.
+-oh, and add a bunch of books, you can just exit the userinfo.txt file and they will get loaded in the next time the program runs, fuck decorations (don't forget pull
+ 	before andding books and to push the code after you added your books or no one else will see them.)
+
+*/
 int main() {
 	loadBooks();
 	loadUsers();
@@ -274,7 +286,9 @@ void import_book() //Couldn't find a way to do this on a large scale... decorato
 	string delimiter = ",";
 	size_t pos = 0;
 
-	//This is were the books are decorated with their detais
+	//This is were the books are decorated with their detais this honestly not a good application for decoration, 
+	//unless someone can find a way to pass an arguement all the way down, then it would be much better and we 
+	//could just mass read from a file...
 	Prints *basePrint = new Book();
 	Prints *decoratedPrint = new Title(basePrint);
 	decoratedPrint = new Author(decoratedPrint);
@@ -311,7 +325,8 @@ string getDetail(size_t pos, string delimiter, string &input)
 	return output;
 }
 
-//Function to disply all books nationwide, detailed option is the difference between just the book title and getting all of the information on each book.
+//Function to disply all books nationwide, "detailed" argument is the difference between
+// just the book title and getting all of the information on each book.
 void displayAllBooks(bool detailed)
 {
 	for(auto itr = stateMap.begin(); itr != stateMap.end(); itr++)
@@ -357,6 +372,7 @@ void displayAllBooks(bool detailed, string state)
 		cout << "Sorry there are no books located in your state." << endl;
 }
 
+//Function to save books to text file;
 void saveBooks()
 {
 	ofstream bookInformation;
@@ -384,6 +400,7 @@ void saveBooks()
 		cout << "Failed to open bookInfo.txt file" << endl;
 }
 
+//Function to load Books to a textfile
 void loadBooks()
 {
 	ifstream bookInformation;
@@ -410,6 +427,7 @@ void loadBooks()
 	}
 }
 
+//Function to save users to text file
 void saveUsers()
 {
 	ofstream userInformation;
