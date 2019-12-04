@@ -29,7 +29,7 @@ void userhash::find(string username)
 	int count = 0;
 	if(inventory[index] == NULL)
 	{
-		cout<<"username "<< username << " not found"<<endl;
+		//cout<<"username "<< username << " not found"<<endl;
 		return;
 	}
 
@@ -40,7 +40,7 @@ void userhash::find(string username)
 		current = current ->next;
 		if(current == 0)
 		{
-			cout<<"username "<<username<<  " not found in hash table"<<endl;
+			//cout<<"username "<<username<<  " not found in hash table"<<endl;
 			return;
 		}
 	}
@@ -65,7 +65,7 @@ bool userhash::checkusername(string username)
 		current = current ->next;
 		if(current == 0)
 		{
-			cout<<"username "<<username<<  " not found in hash table"<<endl;
+			cout<<"username "<<username<<  " not found"<<endl;
 			return(0);
 		}
 	}
@@ -85,7 +85,7 @@ bool userhash::checkpassword(string username, string password)
 		current = current ->next;
 		if(current == 0)
 		{
-			cout<<"username "<<username<<  " not found in hash table"<<endl;
+			cout<<"username "<<username<<  " not found"<<endl;
 			return(0);
 		}
 	}

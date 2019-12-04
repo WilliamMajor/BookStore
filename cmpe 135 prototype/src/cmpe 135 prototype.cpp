@@ -20,7 +20,8 @@ using namespace std;
 
 
 
-void nationalSearch(bookhash nationalArray[50][5], string title){
+void nationalSearch(bookhash nationalArray[50][5], string title)
+{
 	for(int i = 0; i < 50; i++){
 		for (int j = 0; j < 5; j++){
 			nationalArray[i][j].find(title);
@@ -28,7 +29,8 @@ void nationalSearch(bookhash nationalArray[50][5], string title){
 	}
 }
 
-void stateSearch(bookhash stateArray[5], string title){
+void stateSearch(bookhash stateArray[5], string title)
+{
 	for(int i = 0; i < 5; i++){
 		stateArray[i].find(title);
 	}
@@ -47,87 +49,266 @@ void loaduserinfo(userhash &table)
 	}
 }
 
-string login_menu(userhash table)
+string login_menu(userhash &table)
 {
 	string  username, password, state;
 	int menu_select = 0;
-	cout<<"Select an option"<<endl;
-	cout<<"1: Create User"<<endl;
-	cout<<"2: Login"<<endl;
-	cout<<"3: Quit"<<endl;
+
 	while(menu_select != 1 && menu_select != 2 && menu_select != 3)
 	{
+		cout<<"Select an option"<<endl;
+		cout<<"1: Create User"<<endl;
+		cout<<"2: Login"<<endl;
+		cout<<"3: Quit"<<endl;
 		cin>>menu_select;
 		//TODO menu breaks when chars are inputted
 		if(menu_select != 1 && menu_select != 2 && menu_select != 3)
 		{
 			cout<<"invalid option: select again"<<endl;
 		}
-	}
-
-	if(menu_select == 1)
-	{
-		bool is_valid = false;
-		while(is_valid ==false)
+		if(menu_select == 1)
 		{
-			cout<<"Enter Username: ";
-			cin>>username;
-			if(table.checkusername(username) == 1)
+			bool is_valid = false;
+			while(is_valid ==false)
 			{
-				cout<<"Invalid username, or username taken. Try again"<<endl;
+				cout<<"Enter Username: ";
+				cin>>username;
+				if(table.checkusername(username) == 1)
+				{
+					cout<<"Invalid username, or username taken. Try again"<<endl;
+				}
+				else
+				{
+					is_valid = true;
+				}
+			}
+
+			cout<<"Enter Password: ";
+			cin>>password;
+
+			cout<<"Enter the state you live in: ";
+			cin>>state;
+
+			table.insert(username, password, state);
+
+			ofstream log;
+			log.open("userinfo.txt", fstream::app);
+			log<<"\n"<<username<<" "<<password<<" "<<state;
+			cout<<"Account created."<<endl;
+			menu_select = 2;
+
+		}
+
+		if(menu_select == 2)
+		{
+			if(username == "")
+			{
+				cout<<"Enter Username: ";
+				cin>>username;
+			}
+			if(table.checkusername(username))
+			{
+				if(password == "")
+				{
+					cout<<"Enter Password: ";
+					cin>>password;
+				}
+				if(table.checkpassword(username, password))
+				{
+
+					cout<<"login successful"<<endl;
+					return username;
+
+				}
+				else
+				{
+					password = "";
+					cout<<endl;
+					username = "";
+					menu_select = 0;
+				}
 			}
 			else
 			{
-				is_valid = true;
+				password = "";
+				cout<<endl;
+				username = "";
+				menu_select = 0;
+			}
+
+
+		}
+		if(menu_select == 3)
+		{
+			exit(0);
+		}
+	}
+}
+
+int statetoint(string state);
+
+
+void user_menu(bookhash x[50][5], string username, userhash y)
+{
+	string tempvar;
+	int menu_select = 0;
+	while(1)
+	{
+		cout<<"Select an option"<<endl;
+		cout<<"1: Search all stores"<<endl;
+		cout<<"2: Search stores in your state"<<endl;
+		cout<<"3: Log out"<<endl;
+
+		while(menu_select != 1 && menu_select != 2 && menu_select != 3 && menu_select != 4)
+		{
+			cin>>menu_select;
+			//TODO menu breaks when chars are inputted
+			if(menu_select != 1 && menu_select != 2 && menu_select != 3 && menu_select != 4)
+			{
+				cout<<"invalid option: select again"<<endl;
 			}
 		}
+		if(menu_select == 1)
+		{
+			cout<<"enter book title"<<endl;
+			cin>>tempvar;
+			nationalSearch(x, tempvar);
+			menu_select = 0;
 
-		cout<<"Enter Password: ";
-		cin>>password;
+		}
 
-		cout<<"Enter the state you live in: ";
-		cin>>state;
+		if(menu_select == 2)
+		{
+			cout<<"enter book title"<<endl;
+			cin>>tempvar;
+			int state = statetoint(y.returnstate(username));
 
-		table.insert(username, password, state);
+			stateSearch(x[state], tempvar);
 
-		ofstream log;
-		log.open("userinfo.txt", fstream::app);
-		log<<"\n"<<username<<" "<<password<<" "<<state;
-		cout<<"Account created."<<endl;
-		menu_select = 2;
+		}
+
+		if(menu_select == 3)
+		{
+			cout<<"exiting"<<endl;
+			exit(0);
+		}
+	}
+
+}
+
+
+
+
+
+	//TODO testing
+	void loadbooktable(bookhash array[50][5])
+	{
+		ifstream infile("bookinfo.txt");
+		string title, genre, author, state;
+		int storenumber, cost, length;
+
+		int state_int;
+		while(infile >>title >> length >> genre >> author >> cost >> state >> storenumber)
+		{
+			state_int = statetoint(state);
+			array[state_int][storenumber].insert(title, length, genre, author, cost);
+		}
+	}
+
+
+	void import_books(bookhash array[50][5])
+	{
+		cout<<"enter textfilename + .txt  Example: textfile.txt"<<endl;
+		string textfile;
+		cin>>textfile;
+
+		ifstream f(textfile.c_str());
+		if(f.good())
+		{
+			ifstream infile(textfile);
+			string title, genre, author, state;
+			int storenumber, cost, length;
+			int state_int;
+			ofstream log;
+			while(infile >>title >> length >> genre >> author >> cost >> state >> storenumber)
+			{
+				state_int = statetoint(state);
+				array[state_int][storenumber].insert(title, length, genre, author, cost);
+				log.open("bookinfo.txt", fstream::app);
+				log<<"\n"<<title<<" "<<length<<" "<<genre<<" "<<author<<" "<<cost<<" "<<state<<" "<<storenumber;
+			}
+
+
+
+
+		}
+		else
+		{
+			cout<<"couldn't find file"<<endl;
+		}
+
 
 	}
 
-	if(menu_select == 2)
+	void admin_menu(bookhash array[50][5])
 	{
-		if(username == "")
+		string temp;
+		int menu_select = 0;
+		while(1)
 		{
-			cout<<"Enter Username: ";
-			cin>>username;
-		}
-		if(table.checkusername(username))
-		{
-			if(password == "")
+			cout<<"Select an option"<<endl;
+			cout<<"1: add books"<<endl;
+			cout<<"2: Quit"<<endl;
+
+			while(menu_select != 1 && menu_select != 2 )
 			{
-				cout<<"Enter Password: ";
-				cin>>password;
+				cin>>menu_select;
+				//TODO menu breaks when chars are inputted
+				if(menu_select != 1 && menu_select != 2 )
+				{
+					cout<<"invalid option: select again"<<endl;
+				}
 			}
-			if(table.checkpassword(username, password))
+			if(menu_select == 1)
 			{
-				cout<<"correct login"<<endl;
+				import_books(array);
+				menu_select = 0;
 			}
-		}
 
 
-		return username;
+			if(menu_select == 2)
+			{
+				exit(0);
+			}
+		}
 	}
-	if(menu_select == 3)
+
+int main() {
+	bookhash nationalArray[50][5];
+	loadbooktable(nationalArray);
+	userhash usertable;
+	loaduserinfo(usertable);
+	string username = login_menu(usertable);
+	if(username != "admin")
 	{
-		exit(0);
+		user_menu(nationalArray, username, usertable);
+	}
+
+	if(username == "admin")
+	{
+		admin_menu(nationalArray);
+		//TODO
+		//add to admin_menu
 	}
 
 
 }
+
+
+
+
+
+
 
 
 int statetoint(string state)
@@ -339,159 +520,4 @@ int statetoint(string state)
 	{
 		return(50);
 	}
-}
-void user_menu(bookhash x[50][5], string username, userhash y)
-{
-	string temp;
-	int menu_select = 0;
-	while(1)
-	{
-		cout<<"Select an option"<<endl;
-		cout<<"1: Search all stores"<<endl;
-		cout<<"2: Search stores in your state"<<endl;
-		cout<<"3: Log out"<<endl;
-
-		while(menu_select != 1 && menu_select != 2 && menu_select != 3 && menu_select != 4)
-		{
-			cin>>menu_select;
-			//TODO menu breaks when chars are inputted
-			if(menu_select != 1 && menu_select != 2 && menu_select != 3 && menu_select != 4)
-			{
-				cout<<"invalid option: select again"<<endl;
-			}
-		}
-		if(menu_select == 1)
-		{
-			cout<<"enter book title"<<endl;
-			cin>>temp;
-			nationalSearch(x, temp);
-			menu_select = 0;
-
-		}
-
-		if(menu_select == 2)
-		{
-			cout<<"enter book title"<<endl;
-			cin>>temp;
-			int state = statetoint(y.returnstate(username));
-
-			stateSearch(x[state], temp);
-
-		}
-
-		if(menu_select == 3)
-		{
-			exit(0);
-		}
-	}
-
-}
-
-
-
-
-
-	//TODO testing
-	void loadbooktable(bookhash array[50][5])
-	{
-		ifstream infile("bookinfo.txt");
-		string title, genre, author, state;
-		int storenumber, cost, length;
-
-		int state_int;
-		while(infile >>title >> length >> genre >> author >> cost >> state >> storenumber)
-		{
-			state_int = statetoint(state);
-			array[state_int][storenumber].insert(title, length, genre, author, cost);
-		}
-	}
-
-
-	void import_books(bookhash array[50][5])
-	{
-		cout<<"enter textfilename + .txt  Example: textfile.txt"<<endl;
-		string textfile;
-		cin>>textfile;
-
-		ifstream f(textfile.c_str());
-		if(f.good())
-		{
-			ifstream infile(textfile);
-			string title, genre, author, state;
-			int storenumber, cost, length;
-			int state_int;
-			ofstream log;
-			while(infile >>title >> length >> genre >> author >> cost >> state >> storenumber)
-			{
-				state_int = statetoint(state);
-				array[state_int][storenumber].insert(title, length, genre, author, cost);
-				log.open("bookinfo.txt", fstream::app);
-				log<<"\n"<<title<<" "<<length<<" "<<genre<<" "<<author<<" "<<cost<<" "<<state<<" "<<storenumber;
-			}
-
-
-
-
-		}
-		else
-		{
-			cout<<"couldn't find file"<<endl;
-		}
-
-
-	}
-
-	void admin_menu(bookhash array[50][5])
-	{
-		string temp;
-		int menu_select = 0;
-		while(1)
-		{
-			cout<<"Select an option"<<endl;
-			cout<<"1: add books"<<endl;
-			cout<<"2: Quit"<<endl;
-
-			while(menu_select != 1 && menu_select != 2 )
-			{
-				cin>>menu_select;
-				//TODO menu breaks when chars are inputted
-				if(menu_select != 1 && menu_select != 2 )
-				{
-					cout<<"invalid option: select again"<<endl;
-				}
-			}
-			if(menu_select == 1)
-			{
-				import_books(array);
-				menu_select = 0;
-			}
-
-
-			if(menu_select == 2)
-			{
-				exit(0);
-			}
-		}
-	}
-
-int main() {
-	//Current c++ version crashes when constructing 2d array of bookhash
-	bookhash nationalArray[50][5];
-	loadbooktable(nationalArray);
-	userhash usertable;
-	loaduserinfo(usertable);
-	string username = login_menu(usertable);
-	if(username != "admin")
-	{
-		user_menu(nationalArray, username, usertable);
-	}
-
-	if(username == "admin")
-	{
-		admin_menu(nationalArray);
-		//TODO
-		//add to admin_menu
-	}
-
-
 }

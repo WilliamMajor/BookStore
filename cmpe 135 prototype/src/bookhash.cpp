@@ -26,7 +26,7 @@
 		int count = 0;
 		if(bookinventory[index] == NULL)
 		{
-			cout<<"title "<< title << " not found"<<endl;
+			//cout<<"title "<< title << " not found"<<endl;
 			return;
 		}
 
@@ -37,7 +37,7 @@
 			current = current ->next;
 			if(current == 0)
 			{
-				cout<<"Title "<<title<<  " not found in hash table"<<endl;
+				//cout<<"Title "<<title<<  " not found in hash table"<<endl;
 				return;
 			}
 		}
@@ -60,7 +60,7 @@
 		book->cost = cost;
 		book->next = bookinventory[index];
 		bookinventory[index] = book;
-		cout<<"inserted "<< title << " at "<< index<< endl;
+		//cout<<"inserted "<< title << " at "<< index<< endl;
 	}
 
 	void bookhash::removeBook(string title)
@@ -81,7 +81,7 @@
 			current = current ->next;
 			if(current == 0)
 			{
-				cout<<"Title "<<title<<  " not found in hash table"<<endl;
+				cout<<"Title "<<title<<  " not found"<<endl;
 				return;
 			}
 		}
