@@ -8,6 +8,8 @@
 
 #include <iostream>
 #include <string>
+#include <map>
+#include <iterator>
 #include "user.h"
 #include "prints.h"
 #include "printDetails.h"
@@ -17,40 +19,33 @@
 using namespace std;
 
 void runLoginMenu();
+bool createUser(User &newUser);
 
-
-
-
-//TODO these will check strings of hash map to ensure
-// 1. Username exists
-// 2. Password matches
-
-//bool enter_usersname()
-//{
-//
-//}
-//
-//bool enter_password()
-//{
-//
-//}
+/*
+Globals
+*/
+map <string, User> userList;
 
 int main() {
-	//runLoginMenu();
+	while (1)
+	{
+		runLoginMenu();
+	}
+	
 	//cout<<"login finished"<<endl;
-	Prints *basePrint = new Book();
+	// Prints *basePrint = new Book();
 
-	Prints *decoratedPrint = new Title(basePrint);
+	// Prints *decoratedPrint = new Title(basePrint);
+	// decoratedPrint = new Length(decoratedPrint);
+	// decoratedPrint = new Genre(decoratedPrint);
+	// decoratedPrint = new Author(decoratedPrint);
 
-	decoratedPrint = new Length(decoratedPrint);
-	decoratedPrint = new Genre(decoratedPrint);
-	decoratedPrint = new Author(decoratedPrint);
-
-	cout << decoratedPrint -> getDetails() << endl;
-	cout << decoratedPrint -> cost() << endl;
+	// cout << decoratedPrint -> getDetails() << endl;
+	// cout << decoratedPrint -> cost() << endl;
 
 
 }
+
 
 void runLoginMenu()
 {
@@ -67,56 +62,76 @@ void runLoginMenu()
 		{
 			cout<<"invalid option: select again"<<endl;
 		}
+		cout << endl;
 	}
 
-	if(menu_select == 1)
+	switch (menu_select)
 	{
-		User *new_user = new User();
-		string temp;
+	case 1:
+	{
+		User new_user = User();
+		createUser(new_user);
+		break;
+	}
+	case 2: //fill this in later
+	{
+		break;
+	}
+	case 3: exit(0);
+		break;
+	default:
+		break;
+	}
+}
+
+bool createUser(User &newUser)
+{
+	string input;
+	bool validUserName = false;
+
+	while (!validUserName)
+	{
 		cout<<"Enter Username: ";
-		cin>>temp;
-		new_user->set_username(temp);
+		cin>>input;
+		if(userList.find(input) == userList.end())
+		{
+			newUser.set_username(input);
+			validUserName = true;
+		}
 
-		cout<<"Enter Password: ";
-		cin>>temp;
-		new_user->set_password(temp);
-
-		cout<<"Enter the state you live in: ";
-		cin>>temp;
-		new_user->set_state(temp);
-
-		cout<<new_user->get_username()<<endl;
-		cout<<new_user->get_password()<<endl;
-		cout<<new_user->get_state()<<endl;
-
-		//TODO enter username/password into hashmap for login purposes
-
+		//This is the case were we have found the username in the database and we are
+		//letting them choose between going back and just logging in or choosing another username.
+		else  
+		{
+			cout << endl << "UserName already exists in database..." << endl << endl
+				<< "To enter another username press 1." << endl
+				<< "To return to login area press 2."  << endl;
+			cin>>input;
+			switch (stoi(input))
+			{
+				case 1: //nothing to do here just break
+					break;
+				case 2: return false;
+					break;
+				default:
+					cout << "Invalid option, returning to login screen" << endl;
+			}
+		}
+			
 	}
+	
+	cout<<"Enter Password: ";
+	cin>>input;
+	newUser.set_password(input);
 
-	if(menu_select == 2)
-	{
-//		if(enter_username())
-//		{
-//			if(enter_password())
-//			{
-//
-//			}
-//			else
-//			{
-//				cout<<"incorrect password"<<endl;
-//			}
-//		}
-//		else
-//		{
-//			cout<<"invalid username"<<endl;
-//		}
+	cout<<"Enter the state you live in: ";
+	cin>>input;
+	newUser.set_state(input);
 
-		return;
-	}
-	if(menu_select == 3)
-	{
-		exit(0);
-	}
-
-
+	cout<<newUser.get_username()<<endl;
+	cout<<newUser.get_password()<<endl;
+	cout<<newUser.get_state()<<endl;
+	//Add our new user to our map, this is essentially a well layed out hash table
+	// but way easier to work with.
+	userList.insert(pair<string, User>(newUser.get_username(), newUser));
 }
