@@ -37,6 +37,7 @@ map<string, User>::iterator itr;
 
 int main() {
 	loadBooks();
+	loadUsers();
 	while (1)
 		runLoginMenu();
 }
@@ -84,6 +85,7 @@ void runLoginMenu()
 	case 3: 
 	{
 		saveBooks();
+		saveUsers();
 		exit(0);
 		break;
 	}
@@ -139,9 +141,8 @@ void createUser(User &newUser)
 	cin>>input;
 	newUser.set_state(input);
 
-	//Add our new user to our map, this is essentially a well layed out hash table
-	// but way easier to work with.
 	userList.insert(pair<string, User>(newUser.get_username(), newUser));
+	saveUsers();
 }
 
 //Function to check the validity of the users password
@@ -168,8 +169,8 @@ bool login(string &userName)
 		if(userList.find(userName) == userList.end())
 		{
 			cout << "No Username found matching" << endl
-				<< "To return to login menu hit enter: 0"
-				<< " or hit enter to try again." << endl;
+				<< "To return to login menu enter: 0"
+				<< " or enter: 1 to try again." << endl;
 			cin >> choice;
 			if(choice == "0") //break from loop and return to menu
 				break;
@@ -200,7 +201,7 @@ void userMenu(string username)
 	int choice;
 	while(1)
 	{
-		cout << "Select an option" << endl;
+		cout << endl << "Select an option" << endl;
 		cout << "1: Search all stores" << endl;
 		cout << "2: Search stores in your state" << endl;
 		cout << "3: Log out" << endl;
@@ -411,8 +412,42 @@ void loadBooks()
 
 void saveUsers()
 {
+	ofstream userInformation;
+	// Clear the previous users on the list...in case we want to end up removing users...
+	userInformation.open("userInfo.txt", ofstream::out | ofstream::trunc); 
+	userInformation.close();
+
+	userInformation.open("userInfo.txt");
+
+	if(userInformation.is_open())
+	{
+		for(auto itr = userList.begin(); itr != userList.end(); itr++)
+		{
+			userInformation << itr->second.get_username() << ",";
+			userInformation << itr->second.get_password() << ",";
+			userInformation << itr->second.get_state() << endl;
+		}
+		userInformation.close();
+	}
+	else
+		cout << "Failed to create userInfo File" << endl;
 }
 void loadUsers()
 {
+	ifstream userInformation;
+	string data, temp, userName, Password, state;
+	userInformation.open("userInfo.txt");
+
+
+	while( getline(userInformation, data))
+	{
+		User loaded_user = User(); 
+		temp = data;
+		loaded_user.set_username(getDetail(0, ",", data));
+		loaded_user.set_password(getDetail(0, ",", data));
+		loaded_user.set_state(data);
+
+		userList.insert(pair<string, User>(loaded_user.get_username(), loaded_user));
+	}
 
 }
