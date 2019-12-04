@@ -23,10 +23,11 @@ void runLoginMenu();
 void createUser(User &newUser);
 bool login(string &UserNaem);
 bool checkPassword(User toCheck);
-void userMenu();
-void adminMenu();
+void userMenu(string username);
+void adminMenu(string);
 void import_book();
-void displayBooks(bool detailed);
+void displayAllBooks(bool detailed);
+void displayAllBooks(bool detailed, string state);
 string getDetail(size_t pos, string delimiter, string &input);
 
 /*
@@ -37,43 +38,20 @@ map<string, map<int, map<string, string>>> stateMap; //three layer deep map damn
 map<string, User>::iterator itr; 
 
 int main() {
-	// while (1)
-	// {
-	// 	runLoginMenu();
-	// }
-	adminMenu();
-	//cout<<"login finished"<<endl;
-	// Prints *basePrint = new Book();
-
-	// Prints *decoratedPrint = new Title(basePrint);
-	// decoratedPrint = new Length(decoratedPrint);
-	// decoratedPrint = new Genre(decoratedPrint);
-	// decoratedPrint = new Author(decoratedPrint);
-
-	// cout << decoratedPrint -> getDetails() << endl;
-	// cout << decoratedPrint -> cost() << endl;
-
-
+	while (1)
+		runLoginMenu();
 }
 
 
 void runLoginMenu()
 {
 	int menu_select = 0;
-	cout<<"Select an option"<<endl;
-	cout<<"1: Create User"<<endl;
-	cout<<"2: Login"<<endl;
-	cout<<"3: Quit"<<endl;
-	while(menu_select != 1 && menu_select != 2 && menu_select != 3)
-	{
-		cin>>menu_select;
-		//TODO menu breaks when chars are inputted
-		if(menu_select != 1 && menu_select != 2 && menu_select != 3)
-		{
-			cout<<"invalid option: select again"<<endl;
-		}
-		cout << endl;
-	}
+	cout << endl << "Select an option" << endl;
+	cout << "1: Create User" << endl;
+	cout << "2: Login" << endl;
+	cout << "3: Quit" << endl;
+
+	cin >> menu_select;
 
 	switch (menu_select)
 	{
@@ -91,12 +69,12 @@ void runLoginMenu()
 			if(userName == "admin")
 			{
 				cout << "Admin level permissions granted" << endl;
-				adminMenu();
+				adminMenu(userName);
 			}
 			else
 			{
 				cout << "login successul" << endl;
-				userMenu();
+				userMenu(userName);
 			}
 
 
@@ -107,6 +85,7 @@ void runLoginMenu()
 	case 3: exit(0);
 		break;
 	default:
+		cout << "Invalid option, pick again" << endl << endl;
 		break;
 	}
 }
@@ -155,9 +134,6 @@ void createUser(User &newUser)
 	cin>>input;
 	newUser.set_state(input);
 
-	cout<<newUser.get_username()<<endl;
-	cout<<newUser.get_password()<<endl;
-	cout<<newUser.get_state()<<endl;
 	//Add our new user to our map, this is essentially a well layed out hash table
 	// but way easier to work with.
 	userList.insert(pair<string, User>(newUser.get_username(), newUser));
@@ -212,21 +188,79 @@ bool login(string &userName)
 	}
 	return false;
 }
-void userMenu()
-{
 
-}
-void adminMenu()
+void userMenu(string username)
 {
+	char tempvar;
+	int choice;
 	while(1)
 	{
-		import_book();
-		displayBooks(false);
+		cout << "Select an option" << endl;
+		cout << "1: Search all stores" << endl;
+		cout << "2: Search stores in your state" << endl;
+		cout << "3: Log out" << endl;
+		cin >> choice;
+
+		switch(choice)
+		{
+			case 1:
+			{
+				cout << "Detailed? Y/N ";
+				cin >> tempvar;
+				displayAllBooks(toupper(tempvar) == 'Y');
+				break;
+			}
+			case 2:
+			{
+				break;
+			}	
+			case 3: return;
+			
+			case 4: cout << "Invalide choice, choose again." << endl << endl;
+				break;
+		}
+	}
+
+}
+
+void adminMenu(string username)
+{
+	char tempvar;
+	int choice;
+	while(1)
+	{
+		cout << "Select an option" << endl;
+		cout << "1: Search all stores" << endl;
+		cout << "2: Search stores in your state" << endl;
+		cout << "3: Add Book" << endl;
+		cout << "4: Log out" << endl;
+		cin >> choice;
+
+		switch(choice)
+		{
+			case 1:
+			{
+				cout << "Detailed? Y/N ";
+				cin >> tempvar;
+				displayAllBooks(toupper(tempvar) == 'Y');
+				break;
+			}
+			case 2:
+			{
+				cout << "Detailed? Y/N ";
+				cin >> tempvar;
+				displayAllBooks(toupper(tempvar) == 'Y', userList.find(username)->first);
+				break;
+			}	
+			case 3: import_book();
+				break;
+			case 4: return;
+		}
 	}
 	
 }
 
-void import_book() //Couldn't find a way to do this on a large scale... 
+void import_book() //Couldn't find a way to do this on a large scale... decorators are not the way to go for this tbh
 {
 	string bookdetails, state, title, temp;
 	int storeNumber;
@@ -265,7 +299,7 @@ string getDetail(size_t pos, string delimiter, string &input)
 	return output;
 }
 
-void displayBooks(bool detailed)
+void displayAllBooks(bool detailed)
 {
 	for(auto itr = stateMap.begin(); itr != stateMap.end(); itr++)
 	{
@@ -283,4 +317,26 @@ void displayBooks(bool detailed)
 			}
 		}
 	}
+}
+
+void displayAllBooks(bool detailed, string state)
+{
+	if(stateMap.find(state) != stateMap.end())
+	{
+		cout << endl << "State: " << stateMap.find(state)->first << endl;
+		for(auto itr2 = stateMap.find(state)->second.begin(); itr2 != stateMap.find(state)->second.end(); itr2++)
+		{
+			cout << "Store Number: " << itr2->first << endl;
+			for(auto itr3 = itr2->second.begin(); itr3 != itr2->second.end(); itr3++)
+			{
+				if(detailed)
+					cout << itr3->second << endl;
+				else
+					cout << itr3->first << endl;
+				
+			}
+		}
+	}
+	else
+		cout << "Sorry there are no books located in your state." << endl;
 }

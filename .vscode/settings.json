@@ -6,6 +6,7 @@
         "map": "cpp",
         "xtree": "cpp",
         "iosfwd": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "ostream": "cpp"
     }
 }
