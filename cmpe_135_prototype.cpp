@@ -19,12 +19,15 @@
 using namespace std;
 
 void runLoginMenu();
-bool createUser(User &newUser);
+void createUser(User &newUser);
+bool login();
+bool checkPassword(User toCheck);
 
 /*
 Globals
 */
-map <string, User> userList;
+map<string, User> userList;
+map<string, User>::iterator itr; 
 
 int main() {
 	while (1)
@@ -73,8 +76,14 @@ void runLoginMenu()
 		createUser(new_user);
 		break;
 	}
-	case 2: //fill this in later
+	case 2: 
 	{
+		if(login())
+		{
+			cout << "login successul" << endl;
+			//User menu will go here...
+		}
+		
 		break;
 	}
 	case 3: exit(0);
@@ -84,7 +93,7 @@ void runLoginMenu()
 	}
 }
 
-bool createUser(User &newUser)
+void createUser(User &newUser)
 {
 	string input;
 	bool validUserName = false;
@@ -111,7 +120,7 @@ bool createUser(User &newUser)
 			{
 				case 1: //nothing to do here just break
 					break;
-				case 2: return false;
+				case 2: return; // just return from the function
 					break;
 				default:
 					cout << "Invalid option, returning to login screen" << endl;
@@ -134,4 +143,56 @@ bool createUser(User &newUser)
 	//Add our new user to our map, this is essentially a well layed out hash table
 	// but way easier to work with.
 	userList.insert(pair<string, User>(newUser.get_username(), newUser));
+}
+
+//Function to check the validity of the users password
+bool checkPassword(User toCheck) 
+{
+	string password;
+	cout << "Password: ";
+	cin >> password;
+	if(password == toCheck.get_password())
+		return true;
+	else
+		return false;
+	
+}
+
+bool login()
+{
+	string username;
+	string choice;
+	while(1) //loop to allow multiple login
+	{
+		cout << "Enter Username: ";
+		cin >> username;
+		if(userList.find(username) == userList.end())
+		{
+			cout << "No Username found matching" << endl
+				<< "To return to login menu hit enter: 0"
+				<< " or hit enter to try again." << endl;
+			cin >> choice;
+			if(choice == "0") //break from loop and return to menu
+				break;
+		}
+		else
+		{
+			while(1)//allow the user to try to enter their password over and over again
+			{
+				//find our wanted user and call the function that will check
+				// if the password matches the stored value
+				for(itr = userList.find(username); itr != userList.end(); ++itr)
+				{
+					if(!checkPassword(itr->second))
+					{
+						cout << "Incorrect Password... Try again" << endl;
+					}
+					else
+						return true; //the password was correct return from function
+					
+				}
+			}
+		}
+	}
+	return false;
 }
