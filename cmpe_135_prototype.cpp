@@ -42,7 +42,7 @@ int main() {
 		runLoginMenu();
 }
 
-
+//Function to hadle the initial login menu
 void runLoginMenu()
 {
 	int menu_select = 0;
@@ -90,6 +90,7 @@ void runLoginMenu()
 	}
 }
 
+//Function to Create a new user and save it to the userList map
 void createUser(User &newUser)
 {
 	string input;
@@ -152,6 +153,7 @@ bool checkPassword(User toCheck)
 	
 }
 
+//Function to perform the login operations
 bool login(string &userName)
 {
 	string choice;
@@ -179,9 +181,7 @@ bool login(string &userName)
 					if(!checkPassword(itr->second))
 						cout << "Incorrect Password... Try again" << endl;
 					else
-						return true; //correct password found
-					
-					
+						return true; //correct password found			
 				}
 			}
 		}
@@ -189,6 +189,7 @@ bool login(string &userName)
 	return false;
 }
 
+//Funtion to generate standard user menu
 void userMenu(string username)
 {
 	char tempvar;
@@ -223,6 +224,7 @@ void userMenu(string username)
 
 }
 
+//Function to generate admin menu
 void adminMenu(string username)
 {
 	char tempvar;
@@ -259,7 +261,7 @@ void adminMenu(string username)
 	}
 	
 }
-
+//Function to bring in new books to the map
 void import_book() //Couldn't find a way to do this on a large scale... decorators are not the way to go for this tbh
 {
 	string bookdetails, state, title, temp;
@@ -267,6 +269,7 @@ void import_book() //Couldn't find a way to do this on a large scale... decorato
 	string delimiter = ",";
 	size_t pos = 0;
 
+	//This is were the books are decorated with their detais
 	Prints *basePrint = new Book();
 	Prints *decoratedPrint = new Title(basePrint);
 	decoratedPrint = new Length(decoratedPrint);
@@ -277,19 +280,21 @@ void import_book() //Couldn't find a way to do this on a large scale... decorato
 
 	bookdetails =  decoratedPrint -> getDetails();
 	temp = bookdetails;
-	title = getDetail(pos, delimiter, temp);
 
+	//Need to grab some details from the decorated books
+	title = getDetail(pos, delimiter, temp);
 	for (int i = 0; i < 3; i++)
 		getDetail(pos, delimiter, temp); //dont want
-
 	state = getDetail(pos, delimiter, temp);
 	storeNumber = stoi(getDetail(pos, delimiter, temp));
 
+	//Fill in the 3 dimensional map...
 	stateMap.insert(make_pair(state, map<int, map<string, string>>()));
 	stateMap[state].insert(make_pair(storeNumber, map<string, string>()));
 	stateMap[state][storeNumber].insert(make_pair(title, bookdetails));
 }
 
+//Function to parse for the details up to the first commma, it deletes what it just read...
 string getDetail(size_t pos, string delimiter, string &input)
 {
 	string output;
@@ -299,6 +304,7 @@ string getDetail(size_t pos, string delimiter, string &input)
 	return output;
 }
 
+//Function to disply all books nationwide, detailed option is the difference between just the book title and getting all of the information on each book.
 void displayAllBooks(bool detailed)
 {
 	for(auto itr = stateMap.begin(); itr != stateMap.end(); itr++)
@@ -319,6 +325,7 @@ void displayAllBooks(bool detailed)
 	}
 }
 
+//Function to display all books in a particular state.
 void displayAllBooks(bool detailed, string state)
 {
 	if(stateMap.find(state) != stateMap.end())
