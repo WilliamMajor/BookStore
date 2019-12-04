@@ -368,12 +368,6 @@ void saveBooks()
 	if(bookInformation.is_open())
 	{
 		for(auto itr = stateMap.begin(); itr != stateMap.end(); itr++)
-		{
-			for(auto itr2 = itr->second.begin(); itr2 != itr->second.end(); itr2++)
-				storeCount++;
-		}
-
-		for(auto itr = stateMap.begin(); itr != stateMap.end(); itr++)
 	{
 		for(auto itr2 = itr->second.begin(); itr2 != itr->second.end(); itr2++)
 		{
@@ -417,7 +411,6 @@ void loadBooks()
 
 void saveUsers()
 {
- f
 }
 void loadUsers()
 {
