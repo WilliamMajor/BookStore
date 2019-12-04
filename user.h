@@ -17,7 +17,7 @@ public:
 	void set_password(string password);
 	
 	void set_state(string state);
-	
+
 
 	string get_username();
 	
@@ -30,6 +30,7 @@ private:
 	string Username;
 	string State;
 	string Password;
+	
 };
 
 

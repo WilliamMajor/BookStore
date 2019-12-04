@@ -11,7 +11,6 @@ class Prints
 public:
     virtual string getDetails() = 0;
     virtual double cost() = 0;
-
 };
 
 

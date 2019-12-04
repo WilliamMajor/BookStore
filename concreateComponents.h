@@ -6,7 +6,7 @@ class Book : public Prints
 {
     string getDetails()
     {
-        return "Book";
+        return "";
     }
 
     double cost()
@@ -15,28 +15,28 @@ class Book : public Prints
     }
 };
 
-class Journal : public Prints
-{
-    string getDetails()
-    {
-        return "Journal";
-    }
+// class Journal : public Prints
+// {
+//     string getDetails()
+//     {
+//         return "Journal";
+//     }
 
-    double cost()
-    {
-        return 30.00;
-    }
-};
+//     double cost()
+//     {
+//         return 30.00;
+//     }
+// };
 
-class Magazine : public Prints
-{
-    string getDetails()
-    {
-        return "Magazine";
-    }
+// class Magazine : public Prints
+// {
+//     string getDetails()
+//     {
+//         return "Magazine";
+//     }
 
-    double cost()
-    {
-        return 30.00;
-    }
-};
+//     double cost()
+//     {
+//         return 30.00;
+//     }
+// };

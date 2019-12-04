@@ -15,7 +15,6 @@ protected:
 	Prints *m_Prints;
 public:
 	printDetails(Prints *basePrint) : m_Prints(basePrint){}
-
 	string getDetails()
 	{
 		return m_Prints->getDetails();

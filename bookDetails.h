@@ -15,9 +15,11 @@ public:
 
     string getDetails()
     {
-        return m_Prints->getDetails() + " test title";
+        string title;
+        cout << "Title: ";
+        cin >> title;
+        return m_Prints->getDetails() + title;
     }
-
 };
 
 class Length : public printDetails
@@ -27,8 +29,12 @@ public:
 
     string getDetails()
     {
-        return m_Prints->getDetails() + " test length";
+        string length;
+        cout << "Length: ";
+        cin >> length;
+        return m_Prints->getDetails() + "," + length;
     }
+    
 
 };
 
@@ -39,7 +45,10 @@ public:
 
     string getDetails()
     {
-        return m_Prints->getDetails() + " test genre";
+        string genre;
+        cout << "Genre: ";
+        cin >> genre;
+        return m_Prints->getDetails() + "," + genre;
     }
 
 };
@@ -51,9 +60,40 @@ public:
 
     string getDetails()
     {
-        return m_Prints->getDetails() + " test author";
+        string author;
+        cout << "Author: ";
+        cin >> author;
+        return m_Prints->getDetails() + "," + author;
     }
 
+};
+
+class State : public printDetails
+{
+public:
+    State(Prints *basePrint) : printDetails(basePrint) {}
+
+    string getDetails()
+    {
+        string state;
+        cout << "State: ";
+        cin >> state;
+        return m_Prints->getDetails() + "," + state;
+    }
+};
+
+class StoreNumber : public printDetails
+{
+public:
+    StoreNumber(Prints *basePrint) : printDetails(basePrint) {}
+
+    string getDetails()
+    {
+        string storeNumber;
+        cout << endl << "Store Number: ";
+        cin >> storeNumber;
+        return m_Prints->getDetails() + "," + storeNumber;
+    }
 };
 
 
