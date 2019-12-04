@@ -1,10 +1,3 @@
-//============================================================================
-// Name        : cmpe.cpp
-// Author      : Brandon Neep
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
-//============================================================================
 
 #include <iostream>
 #include <string>
@@ -19,6 +12,7 @@
 
 using namespace std;
 
+//Function Declarations...
 void runLoginMenu();
 void createUser(User &newUser);
 bool login(string &UserNaem);
@@ -29,15 +23,20 @@ void import_book();
 void displayAllBooks(bool detailed);
 void displayAllBooks(bool detailed, string state);
 string getDetail(size_t pos, string delimiter, string &input);
+void saveBooks();
+void loadBooks();
+void saveUsers();
+void loadUsers();
 
 /*
-Globals
+Globals Basically just maps...
 */
 map<string, User> userList;
 map<string, map<int, map<string, string>>> stateMap; //three layer deep map damn...
 map<string, User>::iterator itr; 
 
 int main() {
+	loadBooks();
 	while (1)
 		runLoginMenu();
 }
@@ -68,7 +67,7 @@ void runLoginMenu()
 		{
 			if(userName == "admin")
 			{
-				cout << "Admin level permissions granted" << endl;
+				cout << endl << "Admin level permissions granted" << endl;
 				adminMenu(userName);
 			}
 			else
@@ -82,8 +81,13 @@ void runLoginMenu()
 		
 		break;
 	}
-	case 3: exit(0);
+	case 3: 
+	{
+		saveBooks();
+		exit(0);
 		break;
+	}
+		
 	default:
 		cout << "Invalid option, pick again" << endl << endl;
 		break;
@@ -231,7 +235,7 @@ void adminMenu(string username)
 	int choice;
 	while(1)
 	{
-		cout << "Select an option" << endl;
+		cout << endl << "Select an option" << endl;
 		cout << "1: Search all stores" << endl;
 		cout << "2: Search stores in your state" << endl;
 		cout << "3: Add Book" << endl;
@@ -272,9 +276,9 @@ void import_book() //Couldn't find a way to do this on a large scale... decorato
 	//This is were the books are decorated with their detais
 	Prints *basePrint = new Book();
 	Prints *decoratedPrint = new Title(basePrint);
-	decoratedPrint = new Length(decoratedPrint);
-	decoratedPrint = new Genre(decoratedPrint);
 	decoratedPrint = new Author(decoratedPrint);
+	decoratedPrint = new Genre(decoratedPrint);
+	decoratedPrint = new Length(decoratedPrint);
 	decoratedPrint = new State(decoratedPrint);
 	decoratedPrint = new StoreNumber(decoratedPrint);
 
@@ -292,6 +296,8 @@ void import_book() //Couldn't find a way to do this on a large scale... decorato
 	stateMap.insert(make_pair(state, map<int, map<string, string>>()));
 	stateMap[state].insert(make_pair(storeNumber, map<string, string>()));
 	stateMap[state][storeNumber].insert(make_pair(title, bookdetails));
+
+	cout << "Book Added!" << endl;
 }
 
 //Function to parse for the details up to the first commma, it deletes what it just read...
@@ -313,6 +319,8 @@ void displayAllBooks(bool detailed)
 		for(auto itr2 = itr->second.begin(); itr2 != itr->second.end(); itr2++)
 		{
 			cout << "Store Number: " << itr2->first << endl;
+			if(detailed)
+				cout << "(Title, Author, Genre, Lenght, State, Store Number)" << endl;
 			for(auto itr3 = itr2->second.begin(); itr3 != itr2->second.end(); itr3++)
 			{
 				if(detailed)
@@ -346,4 +354,72 @@ void displayAllBooks(bool detailed, string state)
 	}
 	else
 		cout << "Sorry there are no books located in your state." << endl;
+}
+
+void saveBooks()
+{
+	ofstream bookInformation;
+	// Clear the previous books on the list
+	bookInformation.open("bookInfo.txt", ofstream::out | ofstream::trunc); 
+	bookInformation.close();
+
+	bookInformation.open("bookInfo.txt");
+
+	if(bookInformation.is_open())
+	{
+		for(auto itr = stateMap.begin(); itr != stateMap.end(); itr++)
+		{
+			for(auto itr2 = itr->second.begin(); itr2 != itr->second.end(); itr2++)
+				storeCount++;
+		}
+
+		for(auto itr = stateMap.begin(); itr != stateMap.end(); itr++)
+	{
+		for(auto itr2 = itr->second.begin(); itr2 != itr->second.end(); itr2++)
+		{
+			for(auto itr3 = itr2->second.begin(); itr3 != itr2->second.end(); itr3++)
+			{
+				bookInformation << itr3->second << endl;
+			}
+		}
+	}
+	bookInformation.close();
+	}
+	else
+		cout << "Failed to open bookInfo.txt file" << endl;
+}
+
+void loadBooks()
+{
+	ifstream bookInformation;
+	string data, temp, title, length, genre, author, state;
+	int storeNumber;
+	bookInformation.open("bookInfo.txt");
+
+	if(bookInformation.is_open())
+	{
+		while( getline(bookInformation, data))
+		{
+			temp = data;
+			title = getDetail(0, ",", data);
+			author = getDetail(0, ",", data);
+			genre = getDetail(0, ",", data);
+			length = getDetail(0, ",", data);
+			state = getDetail(0, ",", data);
+			storeNumber = stoi(data);
+
+			stateMap.insert(make_pair(state, map<int, map<string, string>>()));
+			stateMap[state].insert(make_pair(storeNumber, map<string, string>()));
+			stateMap[state][storeNumber].insert(make_pair(title, temp));
+		}
+	}
+}
+
+void saveUsers()
+{
+ f
+}
+void loadUsers()
+{
+
 }
