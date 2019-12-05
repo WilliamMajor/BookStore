@@ -261,8 +261,8 @@ void adminMenu(string username)
 	while(1)
 	{
 		cout << endl << "Select an option" << endl;
-		cout << "1: Search all stores" << endl;
-		cout << "2: Search stores in your state" << endl;
+		cout << "1: Display books from all stores" << endl;
+		cout << "2: Display books in your state" << endl;
 		cout << "3: Add Book" << endl;
 		cout << "4: Find Book" << endl;
 		cout << "5: Change Book Quantity" << endl;

@@ -18,7 +18,7 @@ Book4,AuthorMan4,Si-Fi,304,CA,13,13
 Book1,AuthorMan1,Si-Fi,301,CA,27,85
 Book2,AuthorMan2,Si-Fi,302,CA,27,85
 Stranger,Brown,Si-Fi,300,CA,27,85
-Wow,Jason,Fiction,245,CA,27,85
+Wow,Jason,Fiction,245,CA,27,107
 Book11,AuthorMan11,Si-Fi,311,NV,9,13
 Book10,AuthorMan10,Si-Fi,310,NV,13,13
 Book15,AuthorMan15,Si-Fi,315,NV,13,27
