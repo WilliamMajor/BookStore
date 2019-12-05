@@ -23,6 +23,8 @@ void import_book();
 void displayAllBooks(bool detailed);
 void displayAllBooks(bool detailed, string state);
 void searchBook(string bookTitle);
+bool addQuantity(string state, int storeNumber, string book, int quantity);
+bool subtractQuantity(string state, int storeNumber, string book, int quantity);
 string getDetail(size_t pos, string delimiter, string &input);
 void saveBooks();
 void loadBooks();
@@ -38,8 +40,6 @@ map<string, User>::iterator itr;
 
 /*
 TODO (if we want to)
--add quantity to books (decorations make this a pain in the ass, but we could make a decoration function that adds a book and one that removes a books quantity...)
--add search by specific book for users(this is pretty easy just traverse the map looking for the book title if you find it we have it...)
 -maybe encrypt the userdata being sent to the textfile if anyone cares enough...
 -do some sanity/value checking on input data. 
 -bug hunting! I'm sure there are lots of them hiding...
@@ -89,10 +89,7 @@ void runLoginMenu()
 				cout << "login successul" << endl;
 				userMenu(userName);
 			}
-
-
-		}
-		
+		}	
 		break;
 	}
 	case 3: 
@@ -259,8 +256,8 @@ void userMenu(string username)
 void adminMenu(string username)
 {
 	char tempvar;
-	string bookChoice;
-	int choice;
+	string bookChoice, stateChoice, storeChoice;
+	int choice, addSubChoice, quantity;
 	while(1)
 	{
 		cout << endl << "Select an option" << endl;
@@ -268,7 +265,8 @@ void adminMenu(string username)
 		cout << "2: Search stores in your state" << endl;
 		cout << "3: Add Book" << endl;
 		cout << "4: Find Book" << endl;
-		cout << "5: Log out" << endl;
+		cout << "5: Change Book Quantity" << endl;
+		cout << "6: Log out" << endl;
 		cin >> choice;
 
 		switch(choice)
@@ -287,16 +285,49 @@ void adminMenu(string username)
 				displayAllBooks(toupper(tempvar) == 'Y', userList.find(username)->first);
 				break;
 			}
-			case 3:
+			case 3: import_book();
+				break;
+			case 4:
 			{
 				cout << "Book Title: ";
 				cin >> bookChoice;
 				searchBook(bookChoice);
 				break;
 			}
-			case 4: import_book();
+			case 5:
+			{
+				cout << "Would you like to add(1) or subtract(2) books?";
+				cin >> addSubChoice;
+				cout << "State: ";
+				cin >> stateChoice;
+				cout << "Store Number: ";
+				cin >> storeChoice;
+				cout << "Book: ";
+				cin >> bookChoice;
+				cout << "Quantity: ";
+				cin >> quantity;
+				if(addSubChoice == 1)
+				{
+					if(addQuantity(stateChoice, stoi(storeChoice), bookChoice, quantity))
+					{
+						cout << "Added " << quantity <<" copies of " << bookChoice << " to store " << storeChoice << " in " << stateChoice << endl;
+					}
+					else
+						cout << "Sorry we could not find the book you are looking for..."<< endl;	
+				}
+				else if(addSubChoice == 2)
+				{
+					if(subtractQuantity(stateChoice, stoi(storeChoice), bookChoice, quantity))
+					{
+						cout << "Removed " << quantity <<" copies of " << bookChoice << " from store " << storeChoice << " in " << stateChoice << endl;
+					}
+					else
+						cout << "Sorry we could not find the book you are looking for..."<< endl;	
+				}
+
 				break;
-			case 5: return;
+			}
+			case 6: return;
 
 			default: cout << "Invalid choice, choose again." << endl << endl;
 		}
@@ -511,4 +542,71 @@ void loadUsers()
 		userList.insert(pair<string, User>(loaded_user.get_username(), loaded_user));
 	}
 
+}
+
+bool addQuantity(string state, int storeNumber, string book, int quantity)
+{
+	//I wish this shit was just an object and not some stupid string we got from the wrapping...
+	string data, temp, tempTitle, tempAuthor, tempGenre, tempLength, tempState, tempStoreNumber;
+	int tempQuantity;
+	for(auto itr = stateMap.find(state); itr != stateMap.end(); itr++)
+	{
+		for(auto itr2 = itr->second.find(storeNumber); itr2 != itr->second.end(); itr2++)
+		{
+			for(auto itr3 = itr2->second.find(book); itr3 != itr2->second.end(); itr3++)
+			{
+				temp = itr3->second;
+				tempTitle = getDetail(0, ",", temp);
+				tempAuthor = getDetail(0, ",", temp);
+				tempGenre = getDetail(0, ",", temp);
+				tempLength = getDetail(0, ",", temp);
+				tempState = getDetail(0, ",", temp);
+				tempStoreNumber = getDetail(0, ",", temp);
+				tempQuantity = stoi(temp);
+
+				tempQuantity += quantity;
+
+				data = tempTitle + "," + tempAuthor + "," + tempGenre + "," + tempLength + "," + tempState + "," + tempStoreNumber + "," + to_string(tempQuantity);
+				stateMap[state][storeNumber].erase(book);
+				stateMap[state][storeNumber].insert(make_pair(book, data));
+				saveBooks();
+				return true;
+			}
+		}
+	}
+	cout << "Book not found" << endl;
+	return false; //book not found
+}
+
+bool subtractQuantity(string state, int storeNumber, string book, int quantity)
+{
+	string data, temp, tempTitle, tempAuthor, tempGenre, tempLength, tempState, tempStoreNumber;
+	int tempQuantity;
+	for(auto itr = stateMap.find(state); itr != stateMap.end(); itr++)
+	{
+		for(auto itr2 = itr->second.find(storeNumber); itr2 != itr->second.end(); itr2++)
+		{
+			for(auto itr3 = itr2->second.find(book); itr3 != itr2->second.end(); itr3++)
+			{
+				temp = itr3->second;
+				tempTitle = getDetail(0, ",", temp);
+				tempAuthor = getDetail(0, ",", temp);
+				tempGenre = getDetail(0, ",", temp);
+				tempLength = getDetail(0, ",", temp);
+				tempState = getDetail(0, ",", temp);
+				tempStoreNumber = getDetail(0, ",", temp);
+				tempQuantity = stoi(temp);
+
+				tempQuantity += quantity;
+
+				data = tempTitle + "," + tempAuthor + "," + tempGenre + "," + tempLength + "," + tempState + "," + tempStoreNumber + "," + to_string(tempQuantity);
+				stateMap[state][storeNumber].erase(book);
+				stateMap[state][storeNumber].insert(make_pair(book, data));
+				saveBooks();
+				return true;
+			}
+		}
+	}
+	cout << "Book not found" << endl;
+	return false; //book not found
 }
