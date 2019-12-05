@@ -232,7 +232,7 @@ void userMenu(string username)
 			{
 				cout << "Detailed?  Y/N";
 				cin >> tempvar;
-				displayAllBooks(toupper(tempvar) == 'Y', userList.find(username)->first);
+				displayAllBooks(toupper(tempvar) == 'Y', userList.find(username)->second.get_state());
 				break;
 			}	
 			case 3:
@@ -245,7 +245,7 @@ void userMenu(string username)
 
 			case 4: return;
 			
-			default: cout << "Invalide choice, choose again." << endl << endl;
+			default: cout << "Invalide choice, choose again." << endl;
 				break;
 		}
 	}
@@ -282,7 +282,7 @@ void adminMenu(string username)
 			{
 				cout << "Detailed? Y/N ";
 				cin >> tempvar;
-				displayAllBooks(toupper(tempvar) == 'Y', userList.find(username)->first);
+				displayAllBooks(toupper(tempvar) == 'Y', userList.find(username)->second.get_state());
 				break;
 			}
 			case 3: import_book();
@@ -339,6 +339,7 @@ void adminMenu(string username)
 			case 6: return;
 
 			default: cout << "Invalid choice, choose again." << endl << endl;
+				break;
 		}
 	}
 	
@@ -419,6 +420,7 @@ void displayAllBooks(bool detailed)
 //Function to display all books in a particular state.
 void displayAllBooks(bool detailed, string state)
 {
+	cout << state << endl;
 	if(stateMap.find(state) != stateMap.end())
 	{
 		cout << endl << "State: " << stateMap.find(state)->first << endl;
