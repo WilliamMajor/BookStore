@@ -230,7 +230,7 @@ void userMenu(string username)
 			}
 			case 2:
 			{
-				cout << "Detailed?  Y/N";
+				cout << "Detailed?  Y/N ";
 				cin >> tempvar;
 				displayAllBooks(toupper(tempvar) == 'Y', userList.find(username)->second.get_state());
 				break;
