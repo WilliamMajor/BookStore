@@ -23,8 +23,8 @@ void import_book();
 void displayAllBooks(bool detailed);
 void displayAllBooks(bool detailed, string state);
 void searchBook(string bookTitle);
-bool addQuantity(string state, int storeNumber, string book, int quantity);
-bool subtractQuantity(string state, int storeNumber, string book, int quantity);
+bool addQuantity(string state, int storeNumber, string book, int &quantity);
+bool subtractQuantity(string state, int storeNumber, string book, int &quantity);
 string getDetail(size_t pos, string delimiter, string &input);
 void saveBooks();
 void loadBooks();
@@ -296,7 +296,7 @@ void adminMenu(string username)
 			}
 			case 5:
 			{
-				cout << "Would you like to add(1) or subtract(2) books?";
+				cout << endl << "Would you like to add(1) or subtract(2) books? ";
 				cin >> addSubChoice;
 				cout << "State: ";
 				cin >> stateChoice;
@@ -310,19 +310,28 @@ void adminMenu(string username)
 				{
 					if(addQuantity(stateChoice, stoi(storeChoice), bookChoice, quantity))
 					{
-						cout << "Added " << quantity <<" copies of " << bookChoice << " to store " << storeChoice << " in " << stateChoice << endl;
+						cout << endl << "Added " << quantity <<" copies of " << bookChoice << " to store " << storeChoice << " in " << stateChoice << endl;
+						cout << "There are " << quantity << " books now available"<< endl;
 					}
 					else
-						cout << "Sorry we could not find the book you are looking for..."<< endl;	
+						cout << endl << "Sorry we could not find the book you are looking for..."<< endl;	
 				}
 				else if(addSubChoice == 2)
 				{
 					if(subtractQuantity(stateChoice, stoi(storeChoice), bookChoice, quantity))
 					{
-						cout << "Removed " << quantity <<" copies of " << bookChoice << " from store " << storeChoice << " in " << stateChoice << endl;
+						if(quantity != 0)
+						{
+							cout << endl << "Removed " << quantity <<" copies of " << bookChoice << " from store " << storeChoice << " in " << stateChoice << endl;
+							cout << "There are " << quantity << " books now available"<< endl;
+
+						}
+						else
+							cout << "Looks like you removed the last of that book there are now 0 remaining" << endl;
+						
 					}
 					else
-						cout << "Sorry we could not find the book you are looking for..."<< endl;	
+						cout << endl << "Sorry we could not find the book you are looking for..."<< endl;	
 				}
 
 				break;
@@ -544,7 +553,7 @@ void loadUsers()
 
 }
 
-bool addQuantity(string state, int storeNumber, string book, int quantity)
+bool addQuantity(string state, int storeNumber, string book, int &quantity)
 {
 	//I wish this shit was just an object and not some stupid string we got from the wrapping...
 	string data, temp, tempTitle, tempAuthor, tempGenre, tempLength, tempState, tempStoreNumber;
@@ -565,6 +574,7 @@ bool addQuantity(string state, int storeNumber, string book, int quantity)
 				tempQuantity = stoi(temp);
 
 				tempQuantity += quantity;
+				quantity = tempQuantity; //change the orignal value and pass it back so we can say how many are left.
 
 				data = tempTitle + "," + tempAuthor + "," + tempGenre + "," + tempLength + "," + tempState + "," + tempStoreNumber + "," + to_string(tempQuantity);
 				stateMap[state][storeNumber].erase(book);
@@ -578,7 +588,7 @@ bool addQuantity(string state, int storeNumber, string book, int quantity)
 	return false; //book not found
 }
 
-bool subtractQuantity(string state, int storeNumber, string book, int quantity)
+bool subtractQuantity(string state, int storeNumber, string book, int &quantity)
 {
 	string data, temp, tempTitle, tempAuthor, tempGenre, tempLength, tempState, tempStoreNumber;
 	int tempQuantity;
@@ -597,7 +607,13 @@ bool subtractQuantity(string state, int storeNumber, string book, int quantity)
 				tempStoreNumber = getDetail(0, ",", temp);
 				tempQuantity = stoi(temp);
 
-				tempQuantity += quantity;
+				if(quantity > tempQuantity)
+				{
+					tempQuantity = 0;
+				}
+				else
+					tempQuantity -= quantity;
+				quantity  = tempQuantity;
 
 				data = tempTitle + "," + tempAuthor + "," + tempGenre + "," + tempLength + "," + tempState + "," + tempStoreNumber + "," + to_string(tempQuantity);
 				stateMap[state][storeNumber].erase(book);
