@@ -5,7 +5,7 @@
 #include <iterator>
 #include <fstream>
 #include "user.h"
-#include "prints.h"
+#include "Prints.h"
 #include "printDetails.h"
 #include "bookDetails.h"
 #include "concreateComponents.h"
@@ -32,7 +32,7 @@ void loadUsers();
 Globals Basically just maps...
 */
 map<string, User> userList;
-map<string, map<int, map<string, string>>> stateMap; //three layer deep map damn...
+map<string, map<int, map<string, string> > > stateMap; //three layer deep map damn...
 map<string, User>::iterator itr; 
 
 /*
@@ -308,7 +308,7 @@ void import_book() //Couldn't find a way to do this on a large scale... decorato
 	storeNumber = stoi(getDetail(pos, delimiter, temp));
 
 	//Fill in the 3 dimensional map...
-	stateMap.insert(make_pair(state, map<int, map<string, string>>()));
+	stateMap.insert(make_pair(state, map<int, map<string, string> >()));
 	stateMap[state].insert(make_pair(storeNumber, map<string, string>()));
 	stateMap[state][storeNumber].insert(make_pair(title, bookdetails));
 
@@ -420,7 +420,7 @@ void loadBooks()
 			state = getDetail(0, ",", data);
 			storeNumber = stoi(data);
 
-			stateMap.insert(make_pair(state, map<int, map<string, string>>()));
+			stateMap.insert(make_pair(state, map<int, map<string, string> >()));
 			stateMap[state].insert(make_pair(storeNumber, map<string, string>()));
 			stateMap[state][storeNumber].insert(make_pair(title, temp));
 		}
