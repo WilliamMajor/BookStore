@@ -18,10 +18,11 @@ void createUser(User &newUser);
 bool login(string &UserNaem);
 bool checkPassword(User toCheck);
 void userMenu(string username);
-void adminMenu(string);
+void adminMenu(string username);
 void import_book();
 void displayAllBooks(bool detailed);
 void displayAllBooks(bool detailed, string state);
+void searchBook(string bookTitle);
 string getDetail(size_t pos, string delimiter, string &input);
 void saveBooks();
 void loadBooks();
@@ -210,13 +211,15 @@ bool login(string &userName)
 void userMenu(string username)
 {
 	char tempvar;
+	string bookChoice;
 	int choice;
 	while(1)
 	{
 		cout << endl << "Select an option" << endl;
-		cout << "1: Search all stores" << endl;
-		cout << "2: Search stores in your state" << endl;
-		cout << "3: Log out" << endl;
+		cout << "1: Display books for all stores" << endl;
+		cout << "2: Display books for stores in your state" << endl;
+		cout << "3: Find Book" << endl;
+		cout << "4: Log out" << endl;
 		cin >> choice;
 
 		switch(choice)
@@ -230,11 +233,22 @@ void userMenu(string username)
 			}
 			case 2:
 			{
+				cout << "Detailed?  Y/N";
+				cin >> tempvar;
+				displayAllBooks(toupper(tempvar) == 'Y', userList.find(username)->first);
 				break;
 			}	
-			case 3: return;
+			case 3:
+			{
+				cout << "Book Title: ";
+				cin >> bookChoice;
+				searchBook(bookChoice);
+				break;
+			}
+
+			case 4: return;
 			
-			case 4: cout << "Invalide choice, choose again." << endl << endl;
+			default: cout << "Invalide choice, choose again." << endl << endl;
 				break;
 		}
 	}
@@ -245,6 +259,7 @@ void userMenu(string username)
 void adminMenu(string username)
 {
 	char tempvar;
+	string bookChoice;
 	int choice;
 	while(1)
 	{
@@ -252,7 +267,8 @@ void adminMenu(string username)
 		cout << "1: Search all stores" << endl;
 		cout << "2: Search stores in your state" << endl;
 		cout << "3: Add Book" << endl;
-		cout << "4: Log out" << endl;
+		cout << "4: Find Book" << endl;
+		cout << "5: Log out" << endl;
 		cin >> choice;
 
 		switch(choice)
@@ -270,10 +286,19 @@ void adminMenu(string username)
 				cin >> tempvar;
 				displayAllBooks(toupper(tempvar) == 'Y', userList.find(username)->first);
 				break;
-			}	
-			case 3: import_book();
+			}
+			case 3:
+			{
+				cout << "Book Title: ";
+				cin >> bookChoice;
+				searchBook(bookChoice);
 				break;
-			case 4: return;
+			}
+			case 4: import_book();
+				break;
+			case 5: return;
+
+			default: cout << "Invalid choice, choose again." << endl << endl;
 		}
 	}
 	
@@ -296,6 +321,7 @@ void import_book() //Couldn't find a way to do this on a large scale... decorato
 	decoratedPrint = new Length(decoratedPrint);
 	decoratedPrint = new State(decoratedPrint);
 	decoratedPrint = new StoreNumber(decoratedPrint);
+	decoratedPrint = new Quantity(decoratedPrint);
 
 	bookdetails =  decoratedPrint -> getDetails();
 	temp = bookdetails;
@@ -313,6 +339,7 @@ void import_book() //Couldn't find a way to do this on a large scale... decorato
 	stateMap[state][storeNumber].insert(make_pair(title, bookdetails));
 
 	cout << "Book Added!" << endl;
+	saveBooks();
 }
 
 //Function to parse for the details up to the first commma, it deletes what it just read...
@@ -372,6 +399,21 @@ void displayAllBooks(bool detailed, string state)
 		cout << "Sorry there are no books located in your state." << endl;
 }
 
+void searchBook(string bookTitle)
+{
+	for(auto itr = stateMap.begin(); itr != stateMap.end(); itr++)
+	{
+		for(auto itr2 = itr->second.begin(); itr2 != itr->second.end(); itr2++)
+		{
+			
+			for(auto itr3 = itr2->second.find(bookTitle); itr3 != itr2->second.end(); itr3++)
+			{
+				cout << itr3->second << endl;
+			}
+		}
+	}
+}
+
 //Function to save books to text file;
 void saveBooks()
 {
@@ -385,15 +427,15 @@ void saveBooks()
 	if(bookInformation.is_open())
 	{
 		for(auto itr = stateMap.begin(); itr != stateMap.end(); itr++)
-	{
-		for(auto itr2 = itr->second.begin(); itr2 != itr->second.end(); itr2++)
 		{
-			for(auto itr3 = itr2->second.begin(); itr3 != itr2->second.end(); itr3++)
+			for(auto itr2 = itr->second.begin(); itr2 != itr->second.end(); itr2++)
 			{
-				bookInformation << itr3->second << endl;
+				for(auto itr3 = itr2->second.begin(); itr3 != itr2->second.end(); itr3++)
+				{
+					bookInformation << itr3->second << endl;
+				}
 			}
 		}
-	}
 	bookInformation.close();
 	}
 	else
@@ -404,7 +446,7 @@ void saveBooks()
 void loadBooks()
 {
 	ifstream bookInformation;
-	string data, temp, title, length, genre, author, state;
+	string data, temp, title, length, genre, author, state, quantity;
 	int storeNumber;
 	bookInformation.open("bookInfo.txt");
 
@@ -418,7 +460,8 @@ void loadBooks()
 			genre = getDetail(0, ",", data);
 			length = getDetail(0, ",", data);
 			state = getDetail(0, ",", data);
-			storeNumber = stoi(data);
+			storeNumber = stoi(getDetail(0, ",", data));
+			quantity = data;
 
 			stateMap.insert(make_pair(state, map<int, map<string, string> >()));
 			stateMap[state].insert(make_pair(storeNumber, map<string, string>()));

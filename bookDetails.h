@@ -90,10 +90,24 @@ public:
     string getDetails()
     {
         string storeNumber;
-        cout << endl << "Store Number: ";
+        cout << "Store Number: ";
         cin >> storeNumber;
         return m_Prints->getDetails() + "," + storeNumber;
     }
+};
+
+class Quantity : public printDetails
+{
+public:
+	string quantity;
+	Quantity(Prints *basePrint) : printDetails(basePrint) {}
+
+	string getDetails()
+	{
+		cout << endl << "Quantity: ";
+		cin >> quantity;
+		return m_Prints->getDetails() + "," + quantity;
+	}
 };
 
 
