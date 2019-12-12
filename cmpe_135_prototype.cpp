@@ -87,6 +87,7 @@ void runLoginMenu()
 			else
 			{
 				cout << "login successul" << endl;
+				userList.find(userName)->second.updateUser(stateMap);
 				userMenu(userName);
 			}
 		}	
@@ -216,7 +217,9 @@ void userMenu(string username)
 		cout << "1: Display books for all stores" << endl;
 		cout << "2: Display books for stores in your state" << endl;
 		cout << "3: Find Book" << endl;
-		cout << "4: Log out" << endl;
+		cout << "4: Add book to watchlist" << endl;
+		cout << "5: Remove book from watchlist" << endl;
+		cout << "6: Log out" << endl;
 		cin >> choice;
 
 		switch(choice)
@@ -242,8 +245,22 @@ void userMenu(string username)
 				searchBook(bookChoice);
 				break;
 			}
+			case 4:
+			{
+				cout << "Book Title: ";
+				cin >> bookChoice;
+				userList.find(username)->second.addToWatch(bookChoice);
+				break;
+			}
+			case 5:
+			{
+				cout << "Book Title: ";
+				cin >> bookChoice;
+				userList.find(username)->second.removeWatch(bookChoice);
+				break;
+			}
 
-			case 4: return;
+			case 6: return;
 			
 			default: cout << "Invalide choice, choose again." << endl;
 				break;

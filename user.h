@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 
 using namespace std;
 
@@ -18,6 +19,11 @@ public:
 	
 	void set_state(string state);
 
+	void updateUser(map<string, map<int, map<string, string> > > bookList);
+
+	void addToWatch(string title);
+	
+	void removeWatch(string book);
 
 	string get_username();
 	
@@ -30,6 +36,8 @@ private:
 	string Username;
 	string State;
 	string Password;
+	map <string, string> watchList;
+	int watchListCount = 0;
 	
 };
 
